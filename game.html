@@ -11,6 +11,8 @@
 <script>
     // carPic: Image object of the car
     var carPic = document.createElement("img");
+    var checkpointPic = document.createElement("img");
+    var checkpointload = false;
     var carPicLoaded = false;
 
     var carX = 75;
@@ -37,19 +39,19 @@
     const TRACK_COLS = 20;
     const TRACK_ROWS = 15;
     var trackGrid =
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+           [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
             1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-            1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 1, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 1,
             1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1,
             1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1,
             1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1,
-            1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1,
-            1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
-            1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
-            1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
+            1, 0, 3, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1,
+            1, 0, 0, 1, 0, 0, 3, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
+            1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 3, 0, 1,
+            1, 0, 0, 1, 0, 0, 1, 1, 0, 3, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
             1, 0, 2, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1,
-            1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1,
-            1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 1, 3, 0, 1, 1, 0, 0, 0, 3, 0, 1, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 3, 0, 0, 1,
             1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1,
             1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
 
@@ -104,9 +106,13 @@
         carPic.onload = function () {
             carPicLoaded = true;
         }
+        checkpointPic.onload = function () {
+            checkpointload = true;
+        }
+
         // Here we set the source path of the car image.
         carPic.src = "assets/Car.png";
-
+        checkpointPic.src = "assets/checkpoint.png";
         carReset();
     }
 
@@ -127,6 +133,8 @@
                     carX = eachCol * TRACK_W + TRACK_W / 2;
                     carY = eachRow * TRACK_H + TRACK_H / 2;
                 }
+
+
             }
         }
     }
@@ -163,6 +171,21 @@
         }
     }
 
+    function isCheckpointAtColRow(col, row) {
+        if (col >= 0 && col < TRACK_COLS && row >= 0 & row < TRACK_ROWS) {
+            var trackIndexUnderCar = rowColToArrayIndex(col, row);
+            var trackIndexUnderCarAddCol = rowColToArrayIndex(col+1, row);
+            var trackIndexUnderCarAddRow = rowColToArrayIndex(col, row+1);
+            var trackIndexUnderCarSubCol = rowColToArrayIndex(col-1, row);
+            var trackIndexUnderCarSubRow = rowColToArrayIndex(col, row-1);
+            return (trackGrid[trackIndexUnderCar] == 3 || trackGrid[trackIndexUnderCarAddCol] == 3 ||trackGrid[trackIndexUnderCarAddRow] == 3
+                || trackGrid[trackIndexUnderCarSubCol] == 3 ||trackGrid[trackIndexUnderCarSubRow] == 3);
+        }
+        else {
+            return false;
+        }
+    }
+
     //
     function carTrackHandling() {
         var carTrackCol = Math.floor(carX / TRACK_W);
@@ -175,7 +198,24 @@
                 carY -= Math.sin(carAng) * carSpeed;
                 carSpeed *= -.5;
             }
-        }
+            if (isCheckpointAtColRow(carTrackCol, carTrackRow)) {
+                var trackIndexUnderCar = rowColToArrayIndex(carTrackCol, carTrackRow);
+                var trackIndexUnderCarAddCol = rowColToArrayIndex(carTrackCol + 1, carTrackRow);
+                var trackIndexUnderCarAddRow = rowColToArrayIndex(carTrackCol, carTrackRow + 1);
+                var trackIndexUnderCarSubCol = rowColToArrayIndex(carTrackCol-1, carTrackRow);
+                var trackIndexUnderCarSubRow = rowColToArrayIndex(carTrackCol, carTrackRow-1);
+                if (trackGrid[trackIndexUnderCar] != 1)
+                    trackGrid[trackIndexUnderCar] = 0;
+                if (trackGrid[trackIndexUnderCarAddCol] != 1)
+                    trackGrid[trackIndexUnderCarAddCol] = 0;
+                if (trackGrid[trackIndexUnderCarAddRow] != 1)
+                    trackGrid[trackIndexUnderCarAddRow] = 0;
+                if (trackGrid[trackIndexUnderCarSubCol] != 1)
+                    trackGrid[trackIndexUnderCarSubCol] = 0;
+                if (trackGrid[trackIndexUnderCarSubRow] != 1)
+                    trackGrid[trackIndexUnderCarSubRow] = 0;
+                }
+            }
     }
 
     function moveAll() {
@@ -196,18 +236,24 @@
                 if (trackGrid[arrayIndex] == 1) {
                     colorRect(TRACK_W * eachCol, TRACK_H * eachRow, TRACK_W - TRACK_GAP, TRACK_H - TRACK_GAP, 'blue');
                 }
+                if (trackGrid[arrayIndex] == 3) {
+                    if (checkpointload == true) {
+                        canvasContext.drawImage(checkpointPic, TRACK_W * eachCol, TRACK_H * eachRow, 40, 40)
+                    }
+                }
             }
         }
     }
 
     function drawAll() {
         colorRect(0, 0, canvas.width, canvas.height, 'black'); //clear screen
+        drawTracks();
         if (carPicLoaded) {
             // Draw the car
             drawBitmapCenteredWithRotation(carPic, carX, carY, carAng);
         }
 
-        drawTracks();
+
     }
 
     function drawBitmapCenteredWithRotation(useBitmap, atX, atY, withAng) {
@@ -232,7 +278,7 @@
 
     // Set the date we're counting down to
     //add 5 minutes to the current date
-    var countDownDate = new Date().getTime()+ 1*10000;
+    var countDownDate = new Date().getTime()+ 10*60000;
     // Update the count down every 1 second
     var x = setInterval(function() {
 
@@ -255,6 +301,7 @@
         // If the count down is over, write some text
         if (distance < 0) {
             clearInterval(x);
+            document.getElementById("demo").innerHTML =  "";
             colorText("Game Over",canvas.width/2-100,canvas.height/2-50,'red', 150);
             clearInterval(interval);
         }else{
