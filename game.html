@@ -4,18 +4,6 @@
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
     <meta content="utf-8" http-equiv="encoding">
 </head>
-<style>
-    #myProgress {
-        width: 100%;
-        background-color: #ddd;
-    }
-
-    #myBar {
-        width: 100%;
-        height: 30px;
-        background-color: #4CAF50;
-    }
-</style>
 <body style="margin: 0;
     padding: 0;
     background-color: black;">
@@ -37,7 +25,7 @@
     var noOfLap = 0;
     var noOfCheckpoint =0;
     var carDamage=18;
-
+    var carHealth = 40;
     var carX = 75;
     var carY = 75;
     var carAng = 0;
@@ -54,11 +42,10 @@
     var keyHeld_Reverse = false;
     var keyHeld_TurnLeft = false;
     var keyHeld_TurnRight = false;
-    var  interval;
+    var interval;
 
     const TRACK_W = 40; // Setting the track width
     const TRACK_H = 40; // Setting the track height
-    const TRACK_GAP = 0;
     const TRACK_COLS = 20;
     const TRACK_ROWS = 15;
     var originaltrackGrid =
@@ -79,7 +66,7 @@
             1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
 
     var trackGrid =
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+           [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
             1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
             1, 1, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 1,
             1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1,
@@ -159,15 +146,15 @@
         document.addEventListener('keyup', keyReleased);
 
         // After the picture has loaded update the carPicLoaded variable.
+
         carPic.onload = function () {
             carPicLoaded = true;
         }
+        // Here we set the source path of the car image.
+        carPic.src = "assets/car.svg";
         checkpointPic.onload = function () {
             checkpointload = true;
         }
-
-        // Here we set the source path of the car image.
-        carPic.src = "assets/Car.png";
 
         checkpointPic.src = "assets/checkpoint.png";
 
@@ -267,7 +254,7 @@
         }
     }
 
-    //
+
     function carTrackHandling() {
         var carTrackCol = Math.floor(carX / TRACK_W);
         var carTrackRow = Math.floor(carY / TRACK_H);
@@ -317,6 +304,7 @@
         carTrackHandling();
     }
 
+    // This function finds the index inside track grid using column and row.
     function rowColToArrayIndex(col, row) {
         return col + TRACK_COLS * row;
     }
@@ -352,12 +340,16 @@
         drawTracks();
         if (carPicLoaded) {
             // Draw the car
-            drawBitmapCenteredWithRotation(carPic, carX, carY, carAng);
+            drawCar(carPic, carX, carY, carAng, carWidth, carHeight);
         }
+
+        // Show time and number of laps to user.
         colorText(minutes + "m " + seconds + "s ",TRACK_W*(TRACK_COLS-3),30,'red',"30px");
-        colorText("No of  laps: "+noOfLap, 40, 30,'red',"25px");
+        colorText("No of laps: "+noOfLap, 40, 30,'red',"25px");
         colorRect(TRACK_W*(TRACK_COLS-14),5,TRACK_W*(TRACK_COLS-10),30, "#ddd");
-        if(carDamage == 40){
+
+        // if car
+        if(carDamage == carHealth){
             clearInterval(x);
             colorText("Game Over",canvas.width/2-100,canvas.height/2,'red', "70px");
             clearInterval(interval);
@@ -365,7 +357,7 @@
         colorRect(TRACK_W*(TRACK_COLS-15),5,TRACK_W*(TRACK_COLS-(carDamage/2)),30, "red");
     }
 
-    function drawBitmapCenteredWithRotation(useBitmap, atX, atY, withAng) {
+    function drawCar(useBitmap, atX, atY, withAng) {
         canvasContext.save();
         canvasContext.translate(atX, atY);
         canvasContext.rotate(withAng);
