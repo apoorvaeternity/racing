@@ -18,13 +18,13 @@
 
     var checkpointload = false;
     var carPicLoaded = false;
-    var checkeredPicLoaded =false;
+    var checkeredPicLoaded = false;
     var asphaltPicLoaded = false;
     var grassPicLoaded = false;
-
-    var noOfLap = 0;
-    var noOfCheckpoint =0;
-    var carDamage=18;
+    var totalLaps=0;
+    var noOfLap = 4;
+    var noOfCheckpoint = 0;
+    var carDamage = 18;
 
     var gameEnded = false;
     var gameWon = false;
@@ -50,12 +50,12 @@
     var keyHeld_TurnRight = false;
     var interval;
 
-    const TRACK_W = 40; // Setting the track width
-    const TRACK_H = 40; // Setting the track height
+    const CELL_W = 40; // Setting the track width
+    const CELL_H = 40; // Setting the track height
     const TRACK_COLS = 20;
     const TRACK_ROWS = 15;
     var originaltrackGrid =
-           [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
             1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
             1, 1, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 1,
             1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1,
@@ -72,7 +72,7 @@
             1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
 
     var trackGrid =
-           [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
             1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
             1, 1, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 1,
             1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1,
@@ -122,7 +122,7 @@
         evt.preventDefault();
     }
 
-    function audio(src){
+    function audio(src) {
         aud = new Audio(src);
         play = function () {
             return this.aud.play();
@@ -134,8 +134,9 @@
             return this.aud.loop = true;
         };
         return aud;
-        }
-        var a = audio("assets/engine.wav");
+    }
+
+    var a = audio("assets/engine.wav");
     a.play();
 
     // After the window has loaded we will perform various operations
@@ -166,15 +167,15 @@
 
 
         checkeredPic.onload = function () {
-            checkeredPicLoaded=  true;
+            checkeredPicLoaded = true;
         }
         checkeredPic.src = "assets/checkered.png";
         asphaltPic.onload = function () {
-            asphaltPicLoaded=  true;
+            asphaltPicLoaded = true;
         }
         asphaltPic.src = "assets/asphalt.png";
         grassPic.onload = function () {
-            grassPicLoaded=  true;
+            grassPicLoaded = true;
         }
         grassPic.src = "assets/grass.png";
 
@@ -194,8 +195,8 @@
                 var arrayIndex = TRACK_COLS * eachRow + eachCol;
                 if (trackGrid[arrayIndex] == 2) {
                     carAng = -Math.PI / 2;
-                    carX = eachCol * TRACK_W + TRACK_W / 2;
-                    carY = eachRow * TRACK_H + TRACK_H / 2;
+                    carX = eachCol * CELL_W + CELL_W / 2;
+                    carY = eachRow * CELL_H + CELL_H / 2;
                 }
 
 
@@ -238,12 +239,12 @@
     function isCheckpointAtColRow(col, row) {
         if (col >= 0 && col < TRACK_COLS && row >= 0 & row < TRACK_ROWS) {
             var trackIndexUnderCar = rowColToArrayIndex(col, row);
-            var trackIndexUnderCarAddCol = rowColToArrayIndex(col+1, row);
-            var trackIndexUnderCarAddRow = rowColToArrayIndex(col, row+1);
-            var trackIndexUnderCarSubCol = rowColToArrayIndex(col-1, row);
-            var trackIndexUnderCarSubRow = rowColToArrayIndex(col, row-1);
-            return (trackGrid[trackIndexUnderCar] == 3 || trackGrid[trackIndexUnderCarAddCol] == 3 ||trackGrid[trackIndexUnderCarAddRow] == 3
-                || trackGrid[trackIndexUnderCarSubCol] == 3 ||trackGrid[trackIndexUnderCarSubRow] == 3);
+            var trackIndexUnderCarAddCol = rowColToArrayIndex(col + 1, row);
+            var trackIndexUnderCarAddRow = rowColToArrayIndex(col, row + 1);
+            var trackIndexUnderCarSubCol = rowColToArrayIndex(col - 1, row);
+            var trackIndexUnderCarSubRow = rowColToArrayIndex(col, row - 1);
+            return (trackGrid[trackIndexUnderCar] == 3 || trackGrid[trackIndexUnderCarAddCol] == 3 || trackGrid[trackIndexUnderCarAddRow] == 3
+                || trackGrid[trackIndexUnderCarSubCol] == 3 || trackGrid[trackIndexUnderCarSubRow] == 3);
         }
         else {
             return false;
@@ -262,8 +263,8 @@
 
 
     function carTrackHandling() {
-        var carTrackCol = Math.floor(carX / TRACK_W);
-        var carTrackRow = Math.floor(carY / TRACK_H);
+        var carTrackCol = Math.floor(carX / CELL_W);
+        var carTrackRow = Math.floor(carY / CELL_H);
 
         if (carTrackCol >= 0 && carTrackCol < TRACK_COLS && carTrackRow >= 0 && carTrackRow < TRACK_ROWS) {
             if (isTrackAtColRow(carTrackCol, carTrackRow)) {
@@ -277,8 +278,8 @@
                 var trackIndexUnderCar = rowColToArrayIndex(carTrackCol, carTrackRow);
                 var trackIndexUnderCarAddCol = rowColToArrayIndex(carTrackCol + 1, carTrackRow);
                 var trackIndexUnderCarAddRow = rowColToArrayIndex(carTrackCol, carTrackRow + 1);
-                var trackIndexUnderCarSubCol = rowColToArrayIndex(carTrackCol-1, carTrackRow);
-                var trackIndexUnderCarSubRow = rowColToArrayIndex(carTrackCol, carTrackRow-1);
+                var trackIndexUnderCarSubCol = rowColToArrayIndex(carTrackCol - 1, carTrackRow);
+                var trackIndexUnderCarSubRow = rowColToArrayIndex(carTrackCol, carTrackRow - 1);
                 if (trackGrid[trackIndexUnderCar] != 1)
                     trackGrid[trackIndexUnderCar] = 0;
                 if (trackGrid[trackIndexUnderCarAddCol] != 1)
@@ -289,20 +290,20 @@
                     trackGrid[trackIndexUnderCarSubCol] = 0;
                 if (trackGrid[trackIndexUnderCarSubRow] != 1)
                     trackGrid[trackIndexUnderCarSubRow] = 0;
-                }
+            }
 
-                if(isCarAtCheckedStartPoint(carTrackCol, carTrackRow) && noOfCheckpoint == 9){
+            if (isCarAtCheckedStartPoint(carTrackCol, carTrackRow) && noOfCheckpoint == 9) {
                 noOfLap += 1;
                 noOfCheckpoint = 0;
                 trackGrid = originaltrackGrid.slice(0);
-                }
+            }
 
-            if(noOfLap == 4){
+            if (noOfLap == totalLaps) {
                 gameEnded = true;
                 gameWon = true;
             }
 
-            }
+        }
 
     }
 
@@ -322,20 +323,20 @@
             for (var eachCol = 0; eachCol < TRACK_COLS; eachCol++) {
 
                 var arrayIndex = TRACK_COLS * eachRow + eachCol;
-                if (trackGrid[arrayIndex] == 0|| trackGrid[arrayIndex]==3) {
-                    canvasContext.drawImage(asphaltPic,TRACK_W * eachCol, TRACK_H * eachRow, 40,40);
+                if (trackGrid[arrayIndex] == 0 || trackGrid[arrayIndex] == 3) {
+                    canvasContext.drawImage(asphaltPic, CELL_W * eachCol, CELL_H * eachRow, CELL_W, CELL_H);
                 }
                 if (trackGrid[arrayIndex] == 1) {
-                    canvasContext.drawImage(grassPic,TRACK_W * eachCol, TRACK_H * eachRow, 40,40);
+                    canvasContext.drawImage(grassPic, CELL_W * eachCol, CELL_H * eachRow, CELL_W, CELL_H);
                 }
-                if (trackGrid[arrayIndex]==2 ){
-                    if(checkeredPicLoaded){
-                    canvasContext.drawImage(checkeredPic,TRACK_W * eachCol, TRACK_H * eachRow,40,40);
+                if (trackGrid[arrayIndex] == 2) {
+                    if (checkeredPicLoaded) {
+                        canvasContext.drawImage(checkeredPic, CELL_W * eachCol, CELL_H * eachRow, CELL_W, CELL_H);
                     }
                 }
                 if (trackGrid[arrayIndex] == 3) {
                     if (checkpointload) {
-                        canvasContext.drawImage(checkpointPic, TRACK_W * eachCol, TRACK_H * eachRow, 40, 40)
+                       canvasContext.drawImage(checkpointPic, CELL_W * eachCol, CELL_H * eachRow, CELL_W, CELL_H);
                     }
                 }
             }
@@ -352,35 +353,35 @@
         //to check if game is end
         if (gameEnded) {
             //stop the timer
-            clearInterval(x);
+            clearInterval(timer);
             //stop the canvas restore
             clearInterval(interval);
             //check if game is won
             if (gameWon) {
                 colorText("Congratulations! Your time is " + minutes + "m " + seconds + "s ", 100, canvas.height / 2, 'white', "35px");
             }
-            //check if gam is lose
+            //check if game is lost
             if (gameLose) {
                 colorText("Game Over", canvas.width / 2 - 100, canvas.height / 2, 'red', "70px");
             }
         }
 
         // Show time and number of laps to user.
-        colorText(minutes + "m " + seconds + "s ", TRACK_W * (TRACK_COLS - 3), 30, 'red', "30px");
+        colorText(minutes + "m " + seconds + "s ", CELL_W * (TRACK_COLS - 3), 30, 'red', "30px");
         colorText("No of laps: " + noOfLap, 40, 30, 'red', "25px");
-        colorRect(TRACK_W * (TRACK_COLS - 14), 5, TRACK_W * (TRACK_COLS - 10), 30, "#ddd");
+        colorRect(CELL_W * (TRACK_COLS - 14), 5, CELL_W * (TRACK_COLS - 10), 30, "#ddd");
         if (carDamage == carHealth) {
             gameEnded = true;
             gameLose = true;
         }
-            colorRect(TRACK_W * (TRACK_COLS - 15), 5, TRACK_W * (TRACK_COLS - (carDamage / 2)), 30, "red");
+        colorRect(CELL_W * (TRACK_COLS - 15), 5, CELL_W * (TRACK_COLS - (carDamage / 2)), 30, "red");
     }
 
     function drawCar(useBitmap, atX, atY, withAng) {
         canvasContext.save();
         canvasContext.translate(atX, atY);
         canvasContext.rotate(withAng);
-        canvasContext.drawImage(useBitmap, -carWidth / 2, -carHeight / 2,carWidth,carHeight);
+        canvasContext.drawImage(useBitmap, -carWidth / 2, -carHeight / 2, carWidth, carHeight);
         canvasContext.restore();
     }
 
@@ -392,7 +393,7 @@
 
     function colorText(showWords, textX, textY, fillColor, fontSize) {
         canvasContext.fillStyle = fillColor;
-        canvasContext.font = fontSize+" Georgia";
+        canvasContext.font = fontSize + " Georgia";
         canvasContext.fillText(showWords, textX, textY);
     }
 
@@ -400,15 +401,15 @@
     //add 5 minutes to the current date
 
     var countDownDate = 1000;
-    var minutes=0,seconds=0;
+    var minutes = 0, seconds = 0;
     var totalSeconds = 0;
     // Update the count down every 1 second
-    var x = setInterval(function() {
+    var timer = setInterval(function () {
 
         ++totalSeconds;
-        var hour = Math.floor(totalSeconds /3600);
-         minutes = Math.floor((totalSeconds - hour*3600)/60);
-        seconds = totalSeconds - (hour*3600 + minutes*60);
+        var hour = Math.floor(totalSeconds / 3600);
+        minutes = Math.floor((totalSeconds - hour * 3600) / 60);
+        seconds = totalSeconds - (hour * 3600 + minutes * 60);
 
     }, 1000);
 </script>
