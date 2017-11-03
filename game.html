@@ -54,7 +54,7 @@
     var keyHeld_Reverse = false;
     var keyHeld_TurnLeft = false;
     var keyHeld_TurnRight = false;
-
+    var  interval;
 
     const TRACK_W = 40; // Setting the track width
     const TRACK_H = 40; // Setting the track height
@@ -128,7 +128,23 @@
         }
         evt.preventDefault();
     }
-    var  interval;
+
+    function audio(src){
+        aud = new Audio(src);
+        play = function () {
+            return this.aud.play();
+        };
+        pause = function () {
+            return this.aud.pause();
+        };
+        loop = function () {
+            return this.aud.loop = true;
+        };
+        return aud;
+        }
+        var a = audio("assets/engine.wav");
+    a.play();
+        
     // After the window has loaded we will perform various operations
     window.onload = function () {
         // Getting the canvas element
