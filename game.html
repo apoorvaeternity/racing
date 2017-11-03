@@ -4,10 +4,22 @@
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
     <meta content="utf-8" http-equiv="encoding">
 </head>
+<style>
+    #myProgress {
+        width: 100%;
+        background-color: #ddd;
+    }
 
-<body>
-<p id="demo"></p>
-<canvas id="gameCanvas" width="800" height="600"></canvas>
+    #myBar {
+        width: 100%;
+        height: 30px;
+        background-color: #4CAF50;
+    }
+</style>
+<body style="margin: 0;
+    padding: 0;
+    background-color: black;">
+<canvas id="gameCanvas" width="800" height="600" style="width: 63vw; display: block; margin: 0 auto;"></canvas>
 <script>
     // carPic: Image object of the car
     var carPic = document.createElement("img");
@@ -24,6 +36,7 @@
 
     var noOfLap = 0;
     var noOfCheckpoint =0;
+    var carDamage=18;
 
     var carX = 75;
     var carY = 75;
@@ -240,8 +253,8 @@
 
     //
     function carTrackHandling() {
-        var carTrackCol = Math.floor((carX-0.01) / TRACK_W);
-        var carTrackRow = Math.floor((carY-0.01) / TRACK_H);
+        var carTrackCol = Math.floor(carX / TRACK_W);
+        var carTrackRow = Math.floor(carY / TRACK_H);
 
         if (carTrackCol >= 0 && carTrackCol < TRACK_COLS && carTrackRow >= 0 && carTrackRow < TRACK_ROWS) {
 
@@ -249,6 +262,7 @@
                 carX -= Math.cos(carAng) * carSpeed;
                 carY -= Math.sin(carAng) * carSpeed;
                 carSpeed *= -.5;
+                carDamage += 2;
             }
             if (isCheckpointAtColRow(carTrackCol, carTrackRow)) {
                 noOfCheckpoint += 1;
@@ -273,12 +287,13 @@
                 noOfCheckpoint = 0;
                 trackGrid = originaltrackGrid.slice(0);
                 }
-                if(noOfLap == 4){
+                if(noOfLap == 1){
                     colorText("Congratulation!", 50, 50, 'red', "70px");
                     clearInterval(x);
                     clearInterval(interval);
                 }
             }
+
     }
 
     function moveAll() {
@@ -324,7 +339,14 @@
             drawBitmapCenteredWithRotation(carPic, carX, carY, carAng);
         }
         colorText(minutes + "m " + seconds + "s ",TRACK_W*(TRACK_COLS-3),30,'red',"30px");
-        colorText("No of  laps: "+noOfLap, 40, 30,'red',"30px");
+        colorText("No of  laps: "+noOfLap, 40, 30,'red',"25px");
+        colorRect(TRACK_W*(TRACK_COLS-14),5,TRACK_W*(TRACK_COLS-10),30, "#ddd");
+        if(carDamage == 40){
+            clearInterval(x);
+            colorText("Game Over",canvas.width/2-100,canvas.height/2,'red', "70px");
+            clearInterval(interval);
+        }
+        colorRect(TRACK_W*(TRACK_COLS-15),5,TRACK_W*(TRACK_COLS-(carDamage/2)),30, "red");
     }
 
     function drawBitmapCenteredWithRotation(useBitmap, atX, atY, withAng) {
@@ -368,7 +390,7 @@
         // If the count down is over, write some text
         if (distance < 0) {
             clearInterval(x);
-            colorText("Game Over",canvas.width/2-100,canvas.height/2-50,'red', "70px");
+            colorText("Game Over",canvas.width/2-100,canvas.height/2,'red', "70px");
             clearInterval(interval);
         }else{
 
