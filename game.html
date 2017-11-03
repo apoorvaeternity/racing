@@ -19,6 +19,10 @@
     var carPicLoaded = false;
     var checkeredPicLoaded =false;
     var asphaltPicLoaded = false;
+
+    var noOfLap = 0;
+    var noOfCheckpoint =0;
+
     var carX = 75;
     var carY = 75;
     var carAng = 0;
@@ -42,8 +46,25 @@
     const TRACK_GAP = 0;
     const TRACK_COLS = 20;
     const TRACK_ROWS = 15;
-    var trackGrid =
+    var originaltrackGrid =
            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 1, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1,
+            1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1,
+            1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1,
+            1, 0, 3, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1,
+            1, 0, 0, 1, 0, 0, 3, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
+            1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 3, 0, 1,
+            1, 0, 0, 1, 0, 0, 1, 1, 0, 3, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
+            1, 2, 2, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1,
+            1, 0, 0, 1, 3, 0, 1, 1, 0, 0, 0, 3, 0, 1, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 3, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+
+    var trackGrid =
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
             1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
             1, 1, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 1,
             1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1,
@@ -201,10 +222,20 @@
         }
     }
 
+    function isCarAtCheckedStartPoint(col, row) {
+        if (col >= 0 && col < TRACK_COLS && row >= 0 & row < TRACK_ROWS) {
+            var trackIndexUnderCar = rowColToArrayIndex(col, row);
+            return (trackGrid[trackIndexUnderCar] == 2);
+        }
+        else {
+            return false;
+        }
+    }
+
     //
     function carTrackHandling() {
-        var carTrackCol = Math.floor(carX / TRACK_W);
-        var carTrackRow = Math.floor(carY / TRACK_H);
+        var carTrackCol = Math.floor((carX-0.01) / TRACK_W);
+        var carTrackRow = Math.floor((carY-0.01) / TRACK_H);
 
         if (carTrackCol >= 0 && carTrackCol < TRACK_COLS && carTrackRow >= 0 && carTrackRow < TRACK_ROWS) {
 
@@ -214,6 +245,7 @@
                 carSpeed *= -.5;
             }
             if (isCheckpointAtColRow(carTrackCol, carTrackRow)) {
+                noOfCheckpoint += 1;
                 var trackIndexUnderCar = rowColToArrayIndex(carTrackCol, carTrackRow);
                 var trackIndexUnderCarAddCol = rowColToArrayIndex(carTrackCol + 1, carTrackRow);
                 var trackIndexUnderCarAddRow = rowColToArrayIndex(carTrackCol, carTrackRow + 1);
@@ -229,6 +261,16 @@
                     trackGrid[trackIndexUnderCarSubCol] = 0;
                 if (trackGrid[trackIndexUnderCarSubRow] != 1)
                     trackGrid[trackIndexUnderCarSubRow] = 0;
+                }
+                if(isCarAtCheckedStartPoint(carTrackCol, carTrackRow) && noOfCheckpoint == 9){
+                noOfLap += 1;
+                noOfCheckpoint = 0;
+                trackGrid = originaltrackGrid.slice(0);
+                }
+                if(noOfLap == 1){
+                    colorText("Congratulation!", 50, 50, 'red', "70px");
+                    clearInterval(x);
+                    clearInterval(interval);
                 }
             }
     }
@@ -273,8 +315,8 @@
             // Draw the car
             drawBitmapCenteredWithRotation(carPic, carX, carY, carAng);
         }
-
-
+        colorText(minutes + "m " + seconds + "s ",TRACK_W*(TRACK_COLS-3),30,'red',"20px");
+        colorText("No of  laps: "+noOfLap, 40, 30,'red',"20px");
     }
 
     function drawBitmapCenteredWithRotation(useBitmap, atX, atY, withAng) {
@@ -291,9 +333,9 @@
     }
 
 
-    function colorText(showWords, textX, textY, fillColor , maxWidth) {
+    function colorText(showWords, textX, textY, fillColor, fontSize) {
         canvasContext.fillStyle = fillColor;
-        canvasContext.font = "70px Georgia";
+        canvasContext.font = fontSize+" Georgia";
         canvasContext.fillText(showWords, textX, textY);
     }
 
@@ -301,7 +343,7 @@
     //add 5 minutes to the current date
 
     var countDownDate = new Date().getTime()+ 2*60000;
-
+    var minutes=0,seconds=0;
     // Update the count down every 1 second
     var x = setInterval(function() {
 
@@ -311,21 +353,14 @@
         // Find the distance between now an the count down time
         var distance = countDownDate - now;
 
-        // Time calculations for days, hours, minutes and seconds
-        var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-        // Output the result in an element with id="demo"
-        document.getElementById("demo").innerHTML =  minutes + "m " + seconds + "s ";
-
+        // Time calculations for minutes and seconds
+         minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+         seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
         // If the count down is over, write some text
         if (distance < 0) {
             clearInterval(x);
-            document.getElementById("demo").innerHTML =  "";
-            colorText("Game Over",canvas.width/2-100,canvas.height/2-50,'red', 150);
+            colorText("Game Over",canvas.width/2-100,canvas.height/2-50,'red', "70px");
             clearInterval(interval);
         }else{
 
