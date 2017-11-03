@@ -86,7 +86,7 @@
         }
         evt.preventDefault();
     }
-    var  interval;
+var  interval;
     // After the window has loaded we will perform various operations
     window.onload = function () {
         // Getting the canvas element
@@ -94,7 +94,7 @@
         canvasContext = canvas.getContext('2d');
         // Setting the number of frames per second to render.
         var framesPerSecond = 30;
-        interval = setInterval(updateAll, 1000 / framesPerSecond);
+         interval = setInterval(updateAll, 1000 / framesPerSecond);
 
         // Adding keydown and keyup event listleners.
         document.addEventListener('keydown', keyPressed);
