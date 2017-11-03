@@ -11,8 +11,11 @@
 <script>
     // carPic: Image object of the car
     var carPic = document.createElement("img");
+    var checkeredPic = document.createElement("img");
+    var asphaltPic = document.createElement("img");
     var carPicLoaded = false;
-
+    var checkeredPicLoaded =false;
+    var asphaltPicLoaded = false;
     var carX = 75;
     var carY = 75;
     var carAng = 0;
@@ -37,7 +40,7 @@
     const TRACK_COLS = 20;
     const TRACK_ROWS = 15;
     var trackGrid =
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+           [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
             1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
             1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
             1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1,
@@ -47,7 +50,7 @@
             1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
             1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
             1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
-            1, 0, 2, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1,
+            1, 2, 2, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1,
             1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1,
             1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1,
             1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1,
@@ -107,6 +110,15 @@
         // Here we set the source path of the car image.
         carPic.src = "assets/Car.png";
 
+        checkeredPic.onload = function () {
+            checkeredPicLoaded=  true;
+        }
+        checkeredPic.src = "assets/checkered.png";
+        asphaltPic.onload = function () {
+            asphaltPicLoaded=  true;
+        }
+        asphaltPic.src = "assets/asphalt.png";
+
         carReset();
     }
 
@@ -122,7 +134,6 @@
             for (var eachCol = 0; eachCol < TRACK_COLS; eachCol++) {
                 var arrayIndex = TRACK_COLS * eachRow + eachCol;
                 if (trackGrid[arrayIndex] == 2) {
-                    trackGrid[arrayIndex] == 0;
                     carAng = -Math.PI / 2;
                     carX = eachCol * TRACK_W + TRACK_W / 2;
                     carY = eachRow * TRACK_H + TRACK_H / 2;
@@ -193,21 +204,27 @@
             for (var eachCol = 0; eachCol < TRACK_COLS; eachCol++) {
 
                 var arrayIndex = TRACK_COLS * eachRow + eachCol;
-                if (trackGrid[arrayIndex] == 1) {
-                    colorRect(TRACK_W * eachCol, TRACK_H * eachRow, TRACK_W - TRACK_GAP, TRACK_H - TRACK_GAP, 'blue');
+                if (trackGrid[arrayIndex] == 0) {
+                    canvasContext.drawImage(asphaltPic,TRACK_W * eachCol, TRACK_H * eachRow, 40,40);
+                }
+                if (trackGrid[arrayIndex]==2){
+                    if(checkeredPicLoaded){
+                    canvasContext.drawImage(checkeredPic,TRACK_W * eachCol, TRACK_H * eachRow,40,40);
+                    }
                 }
             }
         }
     }
 
     function drawAll() {
-        colorRect(0, 0, canvas.width, canvas.height, 'black'); //clear screen
+        colorRect(0, 0, canvas.width, canvas.height, 'black');
+        drawTracks();
         if (carPicLoaded) {
             // Draw the car
             drawBitmapCenteredWithRotation(carPic, carX, carY, carAng);
         }
 
-        drawTracks();
+
     }
 
     function drawBitmapCenteredWithRotation(useBitmap, atX, atY, withAng) {
@@ -232,7 +249,7 @@
 
     // Set the date we're counting down to
     //add 5 minutes to the current date
-    var countDownDate = new Date().getTime()+ 1*10000;
+    var countDownDate = new Date().getTime()+ 1*60000;
     // Update the count down every 1 second
     var x = setInterval(function() {
 
