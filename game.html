@@ -4,18 +4,6 @@
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
     <meta content="utf-8" http-equiv="encoding">
 </head>
-<style>
-    #myProgress {
-        width: 100%;
-        background-color: #ddd;
-    }
-
-    #myBar {
-        width: 100%;
-        height: 30px;
-        background-color: #4CAF50;
-    }
-</style>
 <body style="margin: 0;
     padding: 0;
     background-color: black;">
@@ -37,6 +25,9 @@
     var noOfLap = 0;
     var noOfCheckpoint =0;
     var carDamage=18;
+    var gameEnded = false;
+    var gameWon = false;
+    var gameLose = false;
 
     var carX = 75;
     var carY = 75;
@@ -144,7 +135,7 @@
         }
         var a = audio("assets/engine.wav");
     a.play();
-        
+
     // After the window has loaded we will perform various operations
     window.onload = function () {
         // Getting the canvas element
@@ -273,7 +264,6 @@
         var carTrackRow = Math.floor(carY / TRACK_H);
 
         if (carTrackCol >= 0 && carTrackCol < TRACK_COLS && carTrackRow >= 0 && carTrackRow < TRACK_ROWS) {
-
             if (isTrackAtColRow(carTrackCol, carTrackRow)) {
                 carX -= Math.cos(carAng) * carSpeed;
                 carY -= Math.sin(carAng) * carSpeed;
@@ -298,16 +288,18 @@
                 if (trackGrid[trackIndexUnderCarSubRow] != 1)
                     trackGrid[trackIndexUnderCarSubRow] = 0;
                 }
+
                 if(isCarAtCheckedStartPoint(carTrackCol, carTrackRow) && noOfCheckpoint == 9){
                 noOfLap += 1;
                 noOfCheckpoint = 0;
                 trackGrid = originaltrackGrid.slice(0);
                 }
-                if(noOfLap == 1){
-                    colorText("Congratulation!", 50, 50, 'red', "70px");
-                    clearInterval(x);
-                    clearInterval(interval);
-                }
+
+            if(noOfLap == 4){
+                gameEnded = true;
+                gameWon = true;
+            }
+
             }
 
     }
@@ -354,13 +346,27 @@
             // Draw the car
             drawBitmapCenteredWithRotation(carPic, carX, carY, carAng);
         }
+        //to check if game is end
+        if(gameEnded){
+            //stop the timer
+            clearInterval(x);
+            //stop the canvas restore
+            clearInterval(interval);
+            //check if game is won
+            if(gameWon){
+                colorText("Congratulations! Your time is "+minutes + "m " + seconds + "s ",100,canvas.height/2,'white', "35px");
+            }
+            //check if gam is lose
+            if(gameLose){
+                colorText("Game Over",canvas.width/2-100,canvas.height/2,'red', "70px");
+            }
+        }
         colorText(minutes + "m " + seconds + "s ",TRACK_W*(TRACK_COLS-3),30,'red',"30px");
         colorText("No of  laps: "+noOfLap, 40, 30,'red',"25px");
         colorRect(TRACK_W*(TRACK_COLS-14),5,TRACK_W*(TRACK_COLS-10),30, "#ddd");
         if(carDamage == 40){
-            clearInterval(x);
-            colorText("Game Over",canvas.width/2-100,canvas.height/2,'red', "70px");
-            clearInterval(interval);
+            gameEnded = true;
+            gameLose = true;
         }
         colorRect(TRACK_W*(TRACK_COLS-15),5,TRACK_W*(TRACK_COLS-(carDamage/2)),30, "red");
     }
@@ -388,29 +394,17 @@
     // Set the date we're counting down to
     //add 5 minutes to the current date
 
-    var countDownDate = new Date().getTime()+ 2*60000;
+    var countDownDate = 1000;
     var minutes=0,seconds=0;
+    var totalSeconds = 0;
     // Update the count down every 1 second
     var x = setInterval(function() {
 
-        // Get todays date and time
-        var now = new Date().getTime();
+        ++totalSeconds;
+        var hour = Math.floor(totalSeconds /3600);
+         minutes = Math.floor((totalSeconds - hour*3600)/60);
+        seconds = totalSeconds - (hour*3600 + minutes*60);
 
-        // Find the distance between now an the count down time
-        var distance = countDownDate - now;
-
-        // Time calculations for minutes and seconds
-         minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-         seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-        // If the count down is over, write some text
-        if (distance < 0) {
-            clearInterval(x);
-            colorText("Game Over",canvas.width/2-100,canvas.height/2,'red', "70px");
-            clearInterval(interval);
-        }else{
-
-        }
     }, 1000);
 </script>
 </body>
