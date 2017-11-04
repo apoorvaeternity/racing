@@ -21,11 +21,12 @@
     var checkeredPicLoaded = false;
     var asphaltPicLoaded = false;
     var grassPicLoaded = false;
-    var totalLaps=4;
+    var totalLaps = 4;
     var noOfLap = 0;
+
     var noOfCheckpoint = 0;
-    var totalCheckpoints=9;
-    var carDamage = 18;
+    var totalCheckpoints = 9;
+    var carDamage = 20;
 
     var gameEnded = false;
     var gameWon = false;
@@ -255,7 +256,7 @@
                 carX -= Math.cos(carAng) * carSpeed;
                 carY -= Math.sin(carAng) * carSpeed;
                 carSpeed *= -.5;
-                carDamage += 2;
+                carDamage += 1;
             }
             if (isCheckpointAtColRow(carTrackCol, carTrackRow)) {
                 noOfCheckpoint += 1;
@@ -320,7 +321,7 @@
                 }
                 if (trackGrid[arrayIndex] == 3) {
                     if (checkpointload) {
-                       canvasContext.drawImage(checkpointPic, CELL_W * eachCol, CELL_H * eachRow, CELL_W, CELL_H);
+                        canvasContext.drawImage(checkpointPic, CELL_W * eachCol, CELL_H * eachRow, CELL_W, CELL_H);
                     }
                 }
             }
@@ -353,12 +354,14 @@
         // Show time and number of laps to user.
         colorText(minutes + "m " + seconds + "s ", CELL_W * (TRACK_COLS - 3), 30, 'red', "30px");
         colorText("No of laps: " + noOfLap, 40, 30, 'red', "25px");
-        colorRect(CELL_W * (TRACK_COLS - 14), 5, CELL_W * (TRACK_COLS - 10), 30, "#ddd");
+        colorRect(CELL_W * (TRACK_COLS - 15), 5, CELL_W * (TRACK_COLS - 10), 30, "#ddd");
         if (carDamage == carHealth) {
             gameEnded = true;
             gameLose = true;
         }
-        colorRect(CELL_W * (TRACK_COLS - 15), 5, CELL_W * (TRACK_COLS - (carDamage / 2)), 30, "red");
+        if (!gameEnded)
+            colorRect(CELL_W * (TRACK_COLS - 15), 5, CELL_W * (TRACK_COLS - (carDamage / 2)), 30, "red");
+
     }
 
     function drawCar(useBitmap, atX, atY, withAng) {
@@ -384,7 +387,6 @@
     // Set the date we're counting down to
     //add 5 minutes to the current date
 
-    var countDownDate = 1000;
     var minutes = 0, seconds = 0;
     var totalSeconds = 0;
     // Update the count down every 1 second
