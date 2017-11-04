@@ -21,21 +21,21 @@
     var checkeredPicLoaded = false;
     var asphaltPicLoaded = false;
     var grassPicLoaded = false;
-    var totalLaps=4;
+    var totalLaps = 4;
     var noOfLap = 0;
-
+    
     var noOfCheckpoint = 0;
-    var totalCheckpoints=9;
+
+    var totalCheckpoints = 9;
     var carDamage = 20;
 
     var gameEnded = false;
     var gameWon = false;
     var gameLose = false;
 
-
     var carHealth = 40;
-    var carX = 75;
-    var carY = 75;
+    var carX = 0;
+    var carY = 0;
     var carAng = 0;
     var carSpeed = 0;
     var canvas, canvasContext;
@@ -45,6 +45,7 @@
     const KEY_UP_ARROW = 38;
     const KEY_RIGHT_ARROW = 39;
     const KEY_DOWN_ARROW = 40;
+    const KEY_SPACE = 32;
 
     var keyHeld_Gas = false;
     var keyHeld_Reverse = false;
@@ -56,8 +57,9 @@
     const CELL_H = 40; // Setting the track height
     const TRACK_COLS = 20;
     const TRACK_ROWS = 15;
+    //
     var originaltrackGrid =
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
             1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
             1, 1, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 1,
             1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1,
@@ -73,25 +75,9 @@
             1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1,
             1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
 
-    var trackGrid =
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-            1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-            1, 1, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 1,
-            1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1,
-            1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1,
-            1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1,
-            1, 0, 3, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1,
-            1, 0, 0, 1, 0, 0, 3, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
-            1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 3, 0, 1,
-            1, 0, 0, 1, 0, 0, 1, 1, 0, 3, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
-            1, 2, 2, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1,
-            1, 0, 0, 1, 3, 0, 1, 1, 0, 0, 0, 3, 0, 1, 0, 0, 0, 0, 0, 1,
-            1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 3, 0, 0, 1,
-            1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1,
-            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+    var trackGrid = originaltrackGrid.slice();
 
     //This function handles key press events.
-
     function keyPressed(evt) {
         if (evt.keyCode == KEY_LEFT_ARROW) {
             keyHeld_TurnLeft = true;
@@ -105,6 +91,8 @@
         if (evt.keyCode == KEY_DOWN_ARROW) {
             keyHeld_Reverse = true;
         }
+        if(evt.keyCode == KEY_SPACE)
+            refreshPage();
     }
 
     //This function handles key release events.
@@ -144,21 +132,22 @@
         }
         // Here we set the source path of the car image.
         carPic.src = "assets/car.svg";
+
         checkpointPic.onload = function () {
             checkpointload = true;
         }
-
         checkpointPic.src = "assets/checkpoint.png";
-
 
         checkeredPic.onload = function () {
             checkeredPicLoaded = true;
         }
         checkeredPic.src = "assets/checkered.png";
+
         asphaltPic.onload = function () {
             asphaltPicLoaded = true;
         }
         asphaltPic.src = "assets/asphalt.png";
+
         grassPic.onload = function () {
             grassPicLoaded = true;
         }
@@ -183,8 +172,6 @@
                     carX = eachCol * CELL_W + CELL_W / 2;
                     carY = eachRow * CELL_H + CELL_H / 2;
                 }
-
-
             }
         }
     }
@@ -205,11 +192,14 @@
             carAng += .04;
         }
 
-
         carX += Math.cos(carAng) * carSpeed;
         carY += Math.sin(carAng) * carSpeed;
     }
 
+    // This function finds the index inside track grid using column and row.
+    function rowColToArrayIndex(col, row) {
+        return col + TRACK_COLS * row;
+    }
 
     function isTrackAtColRow(col, row) {
         if (col >= 0 && col < TRACK_COLS && row >= 0 & row < TRACK_ROWS) {
@@ -246,7 +236,6 @@
         }
     }
 
-
     function carTrackHandling() {
         var carTrackCol = Math.floor(carX / CELL_W);
         var carTrackRow = Math.floor(carY / CELL_H);
@@ -280,7 +269,7 @@
             if (isCarAtCheckedStartPoint(carTrackCol, carTrackRow) && noOfCheckpoint == totalCheckpoints) {
                 noOfLap += 1;
                 noOfCheckpoint = 0;
-                trackGrid = originaltrackGrid.slice(0);
+                trackGrid = originaltrackGrid.slice();
             }
 
             if (noOfLap == totalLaps) {
@@ -297,10 +286,7 @@
         carTrackHandling();
     }
 
-    // This function finds the index inside track grid using column and row.
-    function rowColToArrayIndex(col, row) {
-        return col + TRACK_COLS * row;
-    }
+
 
     function drawTracks() {
 
@@ -321,7 +307,7 @@
                 }
                 if (trackGrid[arrayIndex] == 3) {
                     if (checkpointload) {
-                       canvasContext.drawImage(checkpointPic, CELL_W * eachCol, CELL_H * eachRow, CELL_W, CELL_H);
+                        canvasContext.drawImage(checkpointPic, CELL_W * eachCol, CELL_H * eachRow, CELL_W, CELL_H);
                     }
                 }
             }
@@ -353,14 +339,15 @@
 
         // Show time and number of laps to user.
         colorText(minutes + "m " + seconds + "s ", CELL_W * (TRACK_COLS - 3), 30, 'red', "30px");
-        colorText("No of laps: " + noOfLap, 40, 30, 'red', "25px");
+        colorText("No of laps: " + noOfLap+" /4", CELL_W / 2, 30, 'red', "25px");
+        colorText("Press 'Space_Bar' to restart the game", CELL_W *(TRACK_ROWS - 10), CELL_H * (TRACK_ROWS - 0.3) , 'red', "25px");
 
-        colorRect(CELL_W * (TRACK_COLS - 15), 5, CELL_W * (TRACK_COLS - 10), 30, "#ddd");
+        colorRect(CELL_W * (TRACK_COLS - 14), 5, CELL_W * (TRACK_COLS - 10), 30, "#ddd");
         if (carDamage == carHealth) {
             gameEnded = true;
             gameLose = true;
-        }if(!gameEnded)
-            colorRect(CELL_W * (TRACK_COLS - 15), 5, CELL_W * (TRACK_COLS - (carDamage / 2)), 30, "red");
+        }if(carDamage < 40)
+            colorRect(CELL_W * (TRACK_COLS - 14), 5, CELL_W * (TRACK_COLS - (carDamage / 2)), 30, "red");
 
     }
 
@@ -384,9 +371,12 @@
         canvasContext.fillText(showWords, textX, textY);
     }
 
+    function refreshPage(){
+        window.location.reload();
+    }
+
     // Set the date we're counting down to
     //add 5 minutes to the current date
-
 
     var minutes = 0, seconds = 0;
     var totalSeconds = 0;
