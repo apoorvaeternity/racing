@@ -24,6 +24,7 @@
     var totalLaps=4;
     var noOfLap = 0;
     var noOfCheckpoint = 0;
+    var totalCheckpoints=9;
     var carDamage = 18;
 
     var gameEnded = false;
@@ -121,23 +122,6 @@
         }
         evt.preventDefault();
     }
-
-    function audio(src) {
-        aud = new Audio(src);
-        play = function () {
-            return this.aud.play();
-        };
-        pause = function () {
-            return this.aud.pause();
-        };
-        loop = function () {
-            return this.aud.loop = true;
-        };
-        return aud;
-    }
-
-    var a = audio("assets/engine.wav");
-    a.play();
 
     // After the window has loaded we will perform various operations
     window.onload = function () {
@@ -292,7 +276,7 @@
                     trackGrid[trackIndexUnderCarSubRow] = 0;
             }
 
-            if (isCarAtCheckedStartPoint(carTrackCol, carTrackRow) && noOfCheckpoint == 9) {
+            if (isCarAtCheckedStartPoint(carTrackCol, carTrackRow) && noOfCheckpoint == totalCheckpoints) {
                 noOfLap += 1;
                 noOfCheckpoint = 0;
                 trackGrid = originaltrackGrid.slice(0);
