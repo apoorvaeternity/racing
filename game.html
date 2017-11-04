@@ -57,7 +57,11 @@
     const CELL_H = 40; // Setting the track height
     const TRACK_COLS = 20;
     const TRACK_ROWS = 15;
-    //
+
+    // 0 is asphalt
+    // 1 is grass
+    // 2 is starting point
+    // 3 is checkpoint
     var originaltrackGrid =
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
             1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
@@ -136,22 +140,22 @@
         checkpointPic.onload = function () {
             checkpointload = true;
         }
-        checkpointPic.src = "assets/checkpoint.png";
+        checkpointPic.src = "assets/checkpoint.svg";
 
         checkeredPic.onload = function () {
             checkeredPicLoaded = true;
         }
-        checkeredPic.src = "assets/checkered.png";
 
+        checkeredPic.src = "assets/checkerboard.svg";
         asphaltPic.onload = function () {
             asphaltPicLoaded = true;
         }
-        asphaltPic.src = "assets/asphalt.png";
+        asphaltPic.src = "assets/asphalt.svg";
 
         grassPic.onload = function () {
             grassPicLoaded = true;
         }
-        grassPic.src = "assets/grass.png";
+        grassPic.src = "assets/grass.svg";
 
         carReset();
     }
@@ -178,7 +182,7 @@
 
     // This function will handle car movement based on key press events.
     function carMove() {
-        carSpeed *= .97
+        carSpeed *= .97;
         if (keyHeld_Gas) {
             carSpeed += .3;
         }
@@ -333,7 +337,7 @@
             }
             //check if game is lost
             if (gameLose) {
-                colorText("Game Over", canvas.width / 2 - 100, canvas.height / 2, 'red', "70px");
+                colorText("Game Over", canvas.width / 2 - 180, canvas.height / 2, 'red', "70px");
             }
         }
 
@@ -387,7 +391,6 @@
         var hour = Math.floor(totalSeconds / 3600);
         minutes = Math.floor((totalSeconds - hour * 3600) / 60);
         seconds = totalSeconds - (hour * 3600 + minutes * 60);
-
     }, 1000);
 </script>
 </body>
