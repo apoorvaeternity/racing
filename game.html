@@ -24,7 +24,7 @@
 
     var noOfLap = 0;
     var noOfCheckpoint =0;
-    var carDamage=18;
+    var carDamage=20;
 
     var gameEnded = false;
     var gameWon = false;
@@ -270,7 +270,7 @@
                 carX -= Math.cos(carAng) * carSpeed;
                 carY -= Math.sin(carAng) * carSpeed;
                 carSpeed *= -.5;
-                carDamage += 2;
+                carDamage += 1;
             }
             if (isCheckpointAtColRow(carTrackCol, carTrackRow)) {
                 noOfCheckpoint += 1;
@@ -368,11 +368,11 @@
         // Show time and number of laps to user.
         colorText(minutes + "m " + seconds + "s ", TRACK_W * (TRACK_COLS - 3), 30, 'red', "30px");
         colorText("No of laps: " + noOfLap, 40, 30, 'red', "25px");
-        colorRect(TRACK_W * (TRACK_COLS - 14), 5, TRACK_W * (TRACK_COLS - 10), 30, "#ddd");
+        colorRect(TRACK_W * (TRACK_COLS - 15), 5, TRACK_W * (TRACK_COLS - 10), 30, "#ddd");
         if (carDamage == carHealth) {
             gameEnded = true;
             gameLose = true;
-        }
+        }if(!gameEnded)
             colorRect(TRACK_W * (TRACK_COLS - 15), 5, TRACK_W * (TRACK_COLS - (carDamage / 2)), 30, "red");
     }
 
@@ -399,7 +399,6 @@
     // Set the date we're counting down to
     //add 5 minutes to the current date
 
-    var countDownDate = 1000;
     var minutes=0,seconds=0;
     var totalSeconds = 0;
     // Update the count down every 1 second
