@@ -34,8 +34,8 @@
 
 
     var carHealth = 40;
-    var carX = 75;
-    var carY = 75;
+    var carX = 0;
+    var carY = 0;
     var carAng = 0;
     var carSpeed = 0;
     var canvas, canvasContext;
@@ -56,8 +56,12 @@
     const CELL_H = 40; // Setting the track height
     const TRACK_COLS = 20;
     const TRACK_ROWS = 15;
+    // 0 is asphalt
+    // 1 is grass
+    // 2 is starting point
+    // 3 is checkpoint
     var originaltrackGrid =
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
             1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
             1, 1, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 1,
             1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1,
@@ -74,7 +78,7 @@
             1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
 
     var trackGrid =
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
             1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
             1, 1, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 1,
             1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1,
@@ -148,17 +152,17 @@
             checkpointload = true;
         }
 
-        checkpointPic.src = "assets/checkpoint.png";
+        checkpointPic.src = "assets/checkpoint.svg";
 
 
         checkeredPic.onload = function () {
             checkeredPicLoaded = true;
         }
-        checkeredPic.src = "assets/checkered.png";
+        checkeredPic.src = "assets/checkerboard.svg";
         asphaltPic.onload = function () {
             asphaltPicLoaded = true;
         }
-        asphaltPic.src = "assets/asphalt.png";
+        asphaltPic.src = "assets/asphalt.svg";
         grassPic.onload = function () {
             grassPicLoaded = true;
         }
@@ -191,7 +195,7 @@
 
     // This function will handle car movement based on key press events.
     function carMove() {
-        carSpeed *= .97
+        carSpeed *= .97;
         if (keyHeld_Gas) {
             carSpeed += .3;
         }
@@ -204,8 +208,6 @@
         if (keyHeld_TurnRight) {
             carAng += .04;
         }
-
-
         carX += Math.cos(carAng) * carSpeed;
         carY += Math.sin(carAng) * carSpeed;
     }
@@ -347,7 +349,7 @@
             }
             //check if game is lost
             if (gameLose) {
-                colorText("Game Over", canvas.width / 2 - 100, canvas.height / 2, 'red', "70px");
+                colorText("Game Over", canvas.width / 2 - 180, canvas.height / 2, 'red', "70px");
             }
         }
 
@@ -396,8 +398,7 @@
         var hour = Math.floor(totalSeconds / 3600);
         minutes = Math.floor((totalSeconds - hour * 3600) / 60);
         seconds = totalSeconds - (hour * 3600 + minutes * 60);
-
-    }, 1000);
+        }, 1000);
 </script>
 </body>
 </html>
