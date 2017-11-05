@@ -355,7 +355,7 @@
         // Show time and number of laps to user.
         colorText(minutes + "m " + seconds + "s ", CELL_W * (TRACK_COLS - 3), 30, 'red', "30px");
         colorText("No of laps: " + noOfLap+" /4", CELL_W / 2, 30, 'red', "25px");
-        colorText("Press 'Space_Bar' to restart the game", CELL_W *(TRACK_ROWS - 10), CELL_H * (TRACK_ROWS - 0.3) , 'red', "25px");
+        colorText("Press 'Space Bar' to restart the game", CELL_W *(TRACK_ROWS - 10), CELL_H * (TRACK_ROWS - 0.3) , 'red', "25px");
 
         colorRect(CELL_W * (TRACK_COLS - 14), 5, CELL_W * (TRACK_COLS - 10), 30, "#ddd");
         if (carDamage == carHealth) {
@@ -382,7 +382,7 @@
 
     function colorText(showWords, textX, textY, fillColor, fontSize) {
         canvasContext.fillStyle = fillColor;
-        canvasContext.font = fontSize + " Georgia";
+        canvasContext.font = fontSize + " Calibri";
         canvasContext.fillText(showWords, textX, textY);
     }
 
