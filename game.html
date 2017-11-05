@@ -7,7 +7,7 @@
 </head>
 <body style="margin: 0; overflow-y: hidden;
     padding: 0;
-    background-color: black;">
+    background-color: #77BE45;">
 <img src="./assets/images/landing.svg" style=" width: 18.5%; left: 0; position: absolute;">
 <canvas id="gameCanvas" width="800" height="600" style="width: 63vw; display: block; margin: 0 auto;"></canvas>
 <img src="./assets/images/landing.svg" style=" width: 18.5%; right: 0; top: 0; position: absolute;">
@@ -84,9 +84,9 @@
 
     var trackGrid = originaltrackGrid.slice();
 
-    var slipsound= new Audio("assets/sounds/slips.wav"); //sound for accident on grass
-    var bgmusic= new Audio("assets/sounds/bgmusic.wav"); // background music
-    var checkpoint= new Audio("assets/sounds/flagpost.mp3"); // sound when flagpost is reached
+    var car_damage_sound= new Audio("assets/sounds/slips.wav"); //sound for accident on grass
+    var bg_music= new Audio("assets/sounds/bgmusic.wav"); // background music
+    var checkpoint_sound= new Audio("assets/sounds/flagpost.mp3"); // sound when flagpost is reached
 
     //This function handles key press events.
     function keyPressed(evt) {
@@ -169,7 +169,7 @@
 
     // This is to update the canvas elements.
     function updateAll() {
-        bgmusic.play();
+        bg_music.play();
         moveAll();
         drawAll();
     }
@@ -249,19 +249,20 @@
     }
 
     function carTrackHandling() {
+
         var carTrackCol = Math.floor(carX / CELL_W);
         var carTrackRow = Math.floor(carY / CELL_H);
 
         if (carTrackCol >= 0 && carTrackCol < TRACK_COLS && carTrackRow >= 0 && carTrackRow < TRACK_ROWS) {
             if (isTrackAtColRow(carTrackCol, carTrackRow)) {
-                slipsound.play();
+                car_damage_sound.play();
                 carX -= Math.cos(carAng) * carSpeed;
                 carY -= Math.sin(carAng) * carSpeed;
                 carSpeed *= -.5;
                 carDamage += 1;
             }
             if (isCheckpointAtColRow(carTrackCol, carTrackRow)) {
-                checkpoint.play();
+                checkpoint_sound.play();
                 noOfCheckpoint += 1;
                 var trackIndexUnderCar = rowColToArrayIndex(carTrackCol, carTrackRow);
                 var trackIndexUnderCarAddCol = rowColToArrayIndex(carTrackCol + 1, carTrackRow);
