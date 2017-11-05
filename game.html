@@ -81,6 +81,10 @@
 
     var trackGrid = originaltrackGrid.slice();
 
+    var slipsound= new Audio("sounds/slips.wav"); //sound for accident on grass
+    var bgmusic= new Audio("sounds/bgmusic.wav"); // background music
+    var checkpoint= new Audio("sounds/flagpost.mp3"); // sound when flagpost is reached
+
     //This function handles key press events.
     function keyPressed(evt) {
         if (evt.keyCode == KEY_LEFT_ARROW) {
@@ -162,6 +166,7 @@
 
     // This is to update the canvas elements.
     function updateAll() {
+        bgmusic.play();
         moveAll();
         drawAll();
     }
@@ -246,12 +251,14 @@
 
         if (carTrackCol >= 0 && carTrackCol < TRACK_COLS && carTrackRow >= 0 && carTrackRow < TRACK_ROWS) {
             if (isTrackAtColRow(carTrackCol, carTrackRow)) {
+                slipsound.play();
                 carX -= Math.cos(carAng) * carSpeed;
                 carY -= Math.sin(carAng) * carSpeed;
                 carSpeed *= -.5;
                 carDamage += 1;
             }
             if (isCheckpointAtColRow(carTrackCol, carTrackRow)) {
+                checkpoint.play();
                 noOfCheckpoint += 1;
                 var trackIndexUnderCar = rowColToArrayIndex(carTrackCol, carTrackRow);
                 var trackIndexUnderCarAddCol = rowColToArrayIndex(carTrackCol + 1, carTrackRow);
